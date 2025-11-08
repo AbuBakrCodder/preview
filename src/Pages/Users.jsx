@@ -101,7 +101,6 @@ function Users() {
                     <td>
                       <button onClick={(e) => {
                         e.preventDefault()
-                        toast.success('Deleted!')
                         deleteUser(i.id)
                       }} className="btn bg-red-600 border-0"><i className="fa-solid fa-trash"></i></button>
                     </td>
