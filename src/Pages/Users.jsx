@@ -4,6 +4,7 @@ import toast from "react-hot-toast";
 
 function Users() {
   // "https://jsonplaceholder.typicode.com/users"
+  // http://localhost:3000/
   let { data: users, loading, error, deleteUser, createUser, formData, editUser } = fetchData("https://jsonplaceholder.typicode.com/users")
   const [modal, setModal] = useState(false)
   let [editmodal, setEditModal] = useState(false)
@@ -70,7 +71,7 @@ function Users() {
           <table className="table bg-white">
             <thead>
               <tr className="text-black">
-                <th>№</th>
+                <th>ID</th>
                 <th>Name</th>
                 <th>Phone Number</th>
                 <th>Email</th>

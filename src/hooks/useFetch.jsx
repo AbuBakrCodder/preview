@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react"
 import toast from "react-hot-toast";
+import axios from "axios";
 
 function fetchData(api) {
     let [data, setData] = useState(null);
@@ -10,37 +11,21 @@ function fetchData(api) {
 
     const getData = async () => {
         setLoading(true)
-        try {
-            let res = await fetch(api)
-            if (!res.ok) {
-                throw new Error(`${res.statusText} ${res.status}`)
-            }
-            let data = await res.json()
-            setData(data)
-
-        } catch (err) {
-            setError(err.message)
-        } finally {
-            setLoading(false)
-        }
+        axios.get(api)
+            .then(({ data }) => { setData(data) })
+            .catch((err) => { setError(err) })
+            .finally(() => { setLoading(false) })
     }
     useEffect(() => {
         getData()
     }, [api])
 
-
     const createUser = async (newUser) => {
+        setLoading(true);
         try {
-            setLoading(true);
-            const res = await fetch(api, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(newUser),
-            });
-            if (!res.ok) throw new Error(`${res.statusText} ${res.status}`);
-            const json = await res.json();
+            const { data: json } = await axios.post(api, newUser);
             setData((prev) => (prev ? [...prev, json] : [json]));
-            toast.success('Created!')
+            toast.success("Created!");
         } catch (err) {
             setError(err.message);
         } finally {
@@ -48,24 +33,24 @@ function fetchData(api) {
         }
     };
 
+
     // edit user
 
     const editUser = async (id, editdata) => {
         setLoading(true)
         try {
-            const res = await fetch(`${api}/${id}`, {
-                method: "PUT",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(editdata)
-            })
-            if (!res.ok) throw new Error(`${res.statusText} ${res.status}`);
-            const json = await res.json()
+            // const res = await fetch(`${api}/${id}`, {
+            //     method: "PUT",
+            //     headers: {
+            //         "Content-Type": "application/json",
+            //     },
+            //     body: JSON.stringify(editdata)
+            // })
+            const { data: json } = await axios.put(`${api}/${id}`, editdata);
             setData((prev) =>
                 prev.map((user) => (user.id === id ? { ...user, ...json } : user))
             );
-            toast.success('Edited!')
+            toast.success("Edited!");
         } catch (err) {
             setError(err.message);
         }
@@ -77,10 +62,11 @@ function fetchData(api) {
     // delete user
 
     const deleteUser = async (id) => {
+        setLoading(true);
         try {
-            setLoading(true);
-            const res = await fetch(`${api}/${id}`, { method: "DELETE" });
-            if (!res.ok) throw new Error(`${res.statusText} ${res.status}`);
+            // const res = await fetch(`${api}/${id}`, { method: "DELETE" });
+            // if (!res.ok) throw new Error(`${res.statusText} ${res.status}`);
+            const {data: json} = await axios.delete(`${api}/${id}`)
             setData((prev) => prev.filter((user) => user.id !== id));
             toast.success('Deleted!')
         } catch (err) {
